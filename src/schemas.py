@@ -1,5 +1,14 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
-class UserSchema(BaseModel):
+
+class CreateUserSchema(BaseModel):
 	username: str
 	password: str
+	email: EmailStr
+	is_active: bool = False
+
+class CreateTransactionSchema(BaseModel):
+	...
+
+class CreateCardSchema(BaseModel):
+	...
