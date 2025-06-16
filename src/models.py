@@ -1,7 +1,7 @@
 import decimal
 from datetime import datetime, date
 
-from sqlalchemy import String, DateTime, func, Numeric, Date
+from sqlalchemy import String, DateTime, func, Numeric, Date, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 currencies = ["RUB", "USD", "EUR"]
@@ -34,6 +34,7 @@ class TransactionModel(Base):
 	amount: Mapped[decimal.Decimal] = mapped_column(Numeric(10, 3))
 	currency: Mapped[str] = mapped_column()
 
+	card_id: Mapped[int] = mapped_column(ForeignKey("cards.id"))
 	card: Mapped["CardModel"] = relationship(back_populates="transactions")
 
 
@@ -48,6 +49,8 @@ class CardModel(Base):
 	)
 	currency: Mapped[str] = mapped_column()
 	balance: Mapped[decimal.Decimal] = mapped_column(Numeric(10, 3), default=decimal.Decimal("0"))
+
+	user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
 	user: Mapped["UserModel"] = relationship(back_populates="cards")
 	transactions: Mapped[list["TransactionModel"]] = relationship(

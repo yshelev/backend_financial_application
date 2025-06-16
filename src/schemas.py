@@ -1,7 +1,5 @@
+import decimal
 from pydantic import BaseModel, EmailStr, field_validator
-
-from src.models import UserModel
-
 
 class CreateUserSchema(BaseModel):
 	username: str
@@ -10,13 +8,17 @@ class CreateUserSchema(BaseModel):
 	is_active: bool = False
 
 class CreateTransactionSchema(BaseModel):
-	...
+	is_income: bool
+	amount: decimal.Decimal
+	currency: str = "RUB"
+
+	card_id: int
 
 class CreateCardSchema(BaseModel):
 	masked_number: str
 	name: str
 	currency: str = "RUB"
-	user: UserModel
+	owner_id: int
 
 	@field_validator('masked_number')
 	def validate_card_number_format(self, v: str) -> str:
