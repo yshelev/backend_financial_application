@@ -46,7 +46,7 @@ async def create_user(user: CreateUserSchema, db: AsyncSession = Depends(get_asy
     user_m = UserModel(**user.model_dump())
     return await UserRepository(db).create(user_m)
 
-@app.get("/user/{username}")
+@app.get("/users/{username}")
 async def get_user(username: str, db: AsyncSession = Depends(get_async_db)):
     return await UserRepository(db).read_by_username(username)
 

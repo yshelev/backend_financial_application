@@ -41,13 +41,13 @@ class CardModel(Base):
 	__tablename__ = "cards"
 	id: Mapped[int] = mapped_column(primary_key=True)
 	name: Mapped[str] = mapped_column()
-	maskedNumber: Mapped[str] = mapped_column()
+	masked_number: Mapped[str] = mapped_column()
 	registration_data: Mapped[date] = mapped_column(
 		Date(),
 		default=func.now()
 	)
 	currency: Mapped[str] = mapped_column()
-	balance: Mapped[decimal.Decimal] = mapped_column(Numeric(10, 3))
+	balance: Mapped[decimal.Decimal] = mapped_column(Numeric(10, 3), default=decimal.Decimal("0"))
 
 	user: Mapped["UserModel"] = relationship(back_populates="cards")
 	transactions: Mapped[list["TransactionModel"]] = relationship(
