@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 
 from src.database import async_engine
 from src.models import UserModel, TransactionModel, CardModel
-from src.schemas import GetTransactionSchema
+from src.schemas import CreateTransactionSchema
 
 
 async def get_async_db():

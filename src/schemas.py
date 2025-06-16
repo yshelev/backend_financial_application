@@ -21,7 +21,8 @@ class CreateCardSchema(BaseModel):
 	owner_id: int
 
 	@field_validator('masked_number')
-	def validate_card_number_format(self, v: str) -> str:
+	@staticmethod
+	def validate_card_number_format(v: str) -> str:
 		if not v.isdigit():
 			raise ValueError('Номер карты должен состоять только из цифр.')
 
