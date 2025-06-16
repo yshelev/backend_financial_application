@@ -53,4 +53,4 @@ async def get_user(username: str, db: AsyncSession = Depends(get_async_db)):
 if __name__ == "__main__":
     Base.metadata.create_all(bind=engine)
     import uvicorn
-    uvicorn.run(app)
+    uvicorn.run(app, host="0.0.0.0")
