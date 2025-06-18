@@ -5,7 +5,7 @@ from src.domain.models import UserModel
 from src.domain.repositories import UserRepository, get_async_db, CardRepository
 from src.application.schemas import CreateUserSchema
 
-router = APIRouter(prefix="users",
+router = APIRouter(prefix="/users",
                    tags=["Users"])
 
 @router.get("/")

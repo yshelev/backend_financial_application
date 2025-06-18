@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.domain.repositories import TransactionRepository, get_async_db
 from src.application.schemas import CreateTransactionSchema
 
-router = APIRouter(prefix="transactions",
+router = APIRouter(prefix="/transactions",
                    tags=["Transactions"])
 
 

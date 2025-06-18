@@ -43,7 +43,7 @@ class CardModel(Base):
 	id: Mapped[int] = mapped_column(primary_key=True)
 	name: Mapped[str] = mapped_column()
 	masked_number: Mapped[str] = mapped_column()
-	registration_data: Mapped[date] = mapped_column(
+	registration_date: Mapped[date] = mapped_column(
 		Date(),
 		default=func.now()
 	)
@@ -58,5 +58,5 @@ class CardModel(Base):
 		cascade="all, delete-orphan"
 	)
 
-class CategoryModel(Base):
+class CategoryModel():
 	...

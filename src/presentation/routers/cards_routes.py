@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.domain.repositories import get_async_db, CardRepository, TransactionRepository
 from src.application.schemas import CreateCardSchema
 
-router = APIRouter(prefix="cards",
+router = APIRouter(prefix="/cards",
                    tags=["Cards"])
 
 @router.get("/{card_id}/transactions")
