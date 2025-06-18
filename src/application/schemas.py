@@ -5,13 +5,12 @@ class CreateUserSchema(BaseModel):
 	username: str
 	password: str
 	email: EmailStr
-	is_active: bool = False
+	is_active: bool = True
 
 class CreateTransactionSchema(BaseModel):
 	is_income: bool
 	amount: decimal.Decimal
 	currency: str = "RUB"
-
 	card_id: int
 
 class CreateCardSchema(BaseModel):

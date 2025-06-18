@@ -1,11 +1,14 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.domain.models import CardModel
 from src.domain.repositories import get_async_db, CardRepository, TransactionRepository
 from src.application.schemas import CreateCardSchema
 
 router = APIRouter(prefix="/cards",
                    tags=["Cards"])
+
+@router.patch("/{card_id}/")
 
 @router.get("/{card_id}/transactions")
 async def get_transactions_by_card(card_id: int, db: AsyncSession = Depends(get_async_db)):
@@ -18,4 +21,5 @@ async def get_card_by_id(card_id: int, db: AsyncSession = Depends(get_async_db))
 
 @router.post("/")
 async def create_transaction(card: CreateCardSchema, db: AsyncSession = Depends(get_async_db)):
-    return await CardRepository(db).create(**card.model_dump())
+    card_m = CardModel(**card.model_dump())
+    return await CardRepository(db).create(card_m)

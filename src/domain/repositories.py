@@ -52,7 +52,7 @@ class CardRepository(AsyncRepository):
         return card.scalar()
 
     async def read_by_user(self, user: UserModel):
-        cards = await self.session.execute(select(CardModel).where(CardModel.user == user))
+        cards = await self.session.execute(select(CardModel).where(CardModel.owner == user))
         return cards.scalars().all()
 
     async def create(self, card):

@@ -22,6 +22,11 @@ class UserModel(Base):
 	is_active: Mapped[bool] = mapped_column()
 
 	cards: Mapped[list["CardModel"]] = relationship(
+		back_populates="owner",
+		cascade="all, delete-orphan"
+	)
+
+	categories: Mapped[list["CategoryModel"]] = relationship(
 		back_populates="user",
 		cascade="all, delete-orphan"
 	)
@@ -45,18 +50,23 @@ class CardModel(Base):
 	masked_number: Mapped[str] = mapped_column()
 	registration_date: Mapped[date] = mapped_column(
 		Date(),
-		default=func.now()
+		default=func.current_date()
 	)
 	currency: Mapped[str] = mapped_column()
 	balance: Mapped[decimal.Decimal] = mapped_column(Numeric(10, 3), default=decimal.Decimal("0"))
 
-	user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+	owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
-	user: Mapped["UserModel"] = relationship(back_populates="cards")
+	owner: Mapped["UserModel"] = relationship(back_populates="cards")
 	transactions: Mapped[list["TransactionModel"]] = relationship(
 		back_populates="card",
 		cascade="all, delete-orphan"
 	)
 
-class CategoryModel():
-	...
+class CategoryModel(Base):
+	__tablename__ = "categories"
+	id: Mapped[int] = mapped_column(primary_key=True)
+	title: Mapped[str] = mapped_column()
+	icon_url: Mapped[str] = mapped_column()
+	user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+	user: Mapped["UserModel"] = relationship(back_populates="categories")
