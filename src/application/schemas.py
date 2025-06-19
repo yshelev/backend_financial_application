@@ -1,4 +1,6 @@
 import decimal
+from datetime import datetime
+
 from pydantic import BaseModel, EmailStr, field_validator
 
 class CreateUserSchema(BaseModel):
@@ -8,10 +10,13 @@ class CreateUserSchema(BaseModel):
 	is_active: bool = True
 
 class CreateTransactionSchema(BaseModel):
-	is_income: bool
+	isIncome: bool
 	amount: decimal.Decimal
 	currency: str = "RUB"
-	card_id: int
+	date: datetime
+	iconResId: int
+	description: str = None
+	cardId: int
 
 class CreateCardSchema(BaseModel):
 	masked_number: str
