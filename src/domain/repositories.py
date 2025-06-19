@@ -20,8 +20,12 @@ class UserRepository(AsyncRepository):
         users = await self.session.execute(select(UserModel))
         return users.scalars().all()
 
-    async def read_by_username(self, username: str):
-        user = await self.session.execute(select(UserModel).where(UserModel.username == username))
+    async def read_by_id(self, id_: int):
+        user = await self.session.execute(select(UserModel).where(UserModel.id == id_))
+        return user.scalar()
+
+    async def read_by_email(self, email: str):
+        user = await self.session.execute(select(UserModel).where(UserModel.email == email))
         return user.scalar()
 
     async def create(self, user):

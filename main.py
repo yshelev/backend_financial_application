@@ -9,7 +9,7 @@ from src.presentation.routers import cards_routes, transaction_routes, user_rout
 async def lifespan(app: FastAPI):
     await create_tables()
     yield
-    await engine.dispose()
+    pass
 
 app = FastAPI(lifespan=lifespan)
 
