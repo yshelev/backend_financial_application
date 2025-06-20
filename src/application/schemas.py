@@ -10,13 +10,12 @@ class CreateUserSchema(BaseModel):
 	is_active: bool = True
 
 class CreateTransactionSchema(BaseModel):
-	isIncome: bool
+	is_income: bool
 	amount: decimal.Decimal
 	currency: str = "RUB"
-	date: datetime
-	iconResId: int
+	icon_res_id: int
 	description: str = None
-	cardId: int
+	card_id: int
 
 class CreateCardSchema(BaseModel):
 	masked_number: str

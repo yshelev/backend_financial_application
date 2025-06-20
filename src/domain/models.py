@@ -39,6 +39,8 @@ class TransactionModel(Base):
 	amount: Mapped[decimal.Decimal] = mapped_column(Numeric(10, 3))
 	currency: Mapped[str] = mapped_column()
 
+	description: Mapped[str] = mapped_column(None)
+
 	card_id: Mapped[int] = mapped_column(ForeignKey("cards.id"))
 	card: Mapped["CardModel"] = relationship(back_populates="transactions")
 
