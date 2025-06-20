@@ -40,6 +40,7 @@ class TransactionModel(Base):
 	currency: Mapped[str] = mapped_column()
 
 	description: Mapped[str] = mapped_column(None)
+	icon_res_id: Mapped[int] = mapped_column(None)
 
 	card_id: Mapped[int] = mapped_column(ForeignKey("cards.id"))
 	card: Mapped["CardModel"] = relationship(back_populates="transactions")
@@ -49,11 +50,8 @@ class CardModel(Base):
 	__tablename__ = "cards"
 	id: Mapped[int] = mapped_column(primary_key=True)
 	name: Mapped[str] = mapped_column()
-	masked_number: Mapped[str] = mapped_column()
-	registration_date: Mapped[date] = mapped_column(
-		Date(),
-		default=func.current_date()
-	)
+	masked_number: Mapped[str] = mapped_column(String(4))
+	date: Mapped[str] = mapped_column(String(5))
 	currency: Mapped[str] = mapped_column()
 	balance: Mapped[decimal.Decimal] = mapped_column(Numeric(10, 3), default=decimal.Decimal("0"))
 
