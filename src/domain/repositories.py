@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker, selectinload
 
@@ -62,6 +62,12 @@ class TransactionRepository(AsyncRepository):
         await self.session.refresh(transaction)
         return transaction
 
+    async def delete(self, transaction_id):
+        trns = await self.session.execute(delete(TransactionModel).where(TransactionModel.id == transaction_id))
+        await self.session.commit()
+        print(trns)
+        print("ayo")
+
 class CardRepository(AsyncRepository):
     async def read_by_id(self, card_id: int):
         card = await self.session.execute(select(CardModel).where(CardModel.id == card_id))
@@ -76,3 +82,7 @@ class CardRepository(AsyncRepository):
         await self.session.commit()
         await self.session.refresh(card)
         return card
+
+    async def delete(self, card_id):
+        await self.session.execute(delete(CardModel).where(CardModel.id == card_id))
+        await self.session.commit()

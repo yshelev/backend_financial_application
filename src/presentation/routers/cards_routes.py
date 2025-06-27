@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.status import HTTP_200_OK
 
 from src.domain.models import CardModel
 from src.domain.repositories import get_async_db, CardRepository, TransactionRepository, UserRepository
@@ -22,3 +23,8 @@ async def create_transaction(card: CreateCardSchema, db: AsyncSession = Depends(
     user = await UserRepository(db).read_by_email(card.owner_email)
     card_m = CardModel(**card.model_dump(), owner_id=user.id)
     return await CardRepository(db).create(card_m)
+
+@router.delete("/{card_id}")
+async def delete_card(card_id: int, db: AsyncSession = Depends(get_async_db)):
+    await CardRepository(db).delete(card_id)
+    return HTTP_200_OK
