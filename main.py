@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from src.domain.database import engine, create_tables
+from src.domain.database import create_tables
 from src.presentation.routers import cards_routes, transaction_routes, user_routes
 
 @asynccontextmanager
@@ -20,4 +20,4 @@ app.include_router(user_routes.router)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", reload=True, host="0.0.0.0")
+    uvicorn.run("main:app", reload=True)

@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, selectinload
 
 from src.domain.database import async_engine
 from src.domain.models import UserModel, TransactionModel, CardModel
@@ -20,9 +20,21 @@ class UserRepository(AsyncRepository):
         users = await self.session.execute(select(UserModel))
         return users.scalars().all()
 
-    async def read_by_id(self, id_: int):
+    async def read_by_id(self, id_: int) -> UserModel:
         user = await self.session.execute(select(UserModel).where(UserModel.id == id_))
         return user.scalar()
+
+    async def read_by_email_with_cards_and_transactions(self, email: str):
+        stmt = (
+            select(UserModel)
+            .options(
+                selectinload(UserModel.cards)
+                .selectinload(CardModel.transactions)
+            )
+            .where(UserModel.email == email)
+        )
+        result = await self.session.execute(stmt)
+        return result.scalar()
 
     async def read_by_email(self, email: str):
         user = await self.session.execute(select(UserModel).where(UserModel.email == email))
@@ -56,7 +68,7 @@ class CardRepository(AsyncRepository):
         return card.scalar()
 
     async def read_by_user(self, user: UserModel):
-        cards = await self.session.execute(select(CardModel).where(CardModel.owner == user))
+        cards = await self.session.execute(select(CardModel).where(CardModel.owner_id == user.id))
         return cards.scalars().all()
 
     async def create(self, card):

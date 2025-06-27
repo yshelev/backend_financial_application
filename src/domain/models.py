@@ -42,6 +42,13 @@ class TransactionModel(Base):
 	description: Mapped[str] = mapped_column(None)
 	icon_res_id: Mapped[int] = mapped_column(None)
 
+	date: Mapped[datetime] = mapped_column(
+		DateTime(timezone=True),
+		default=func.now()
+	)
+
+	category: Mapped[str] = mapped_column(default="Salary")
+
 	card_id: Mapped[int] = mapped_column(ForeignKey("cards.id"))
 	card: Mapped["CardModel"] = relationship(back_populates="transactions")
 

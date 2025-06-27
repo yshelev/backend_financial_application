@@ -1,7 +1,7 @@
 import decimal
-from datetime import date, datetime
 
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, EmailStr, field_validator, Field
+
 
 class CreateUserSchema(BaseModel):
 	username: str
@@ -21,25 +21,16 @@ class CreateCardSchema(BaseModel):
 	masked_number: str
 	name: str
 	currency: str = "RUB"
-	owner_id: int
-	date: date
+	owner_email: EmailStr = Field(..., exclude=True)
+	date: str
+	balance: float = 0
 
-	@field_validator('masked_number')
-	@staticmethod
-	def validate_card_number_format(v: str) -> str:
-		if not v.isdigit():
-			raise ValueError('Номер карты должен состоять только из цифр.')
-
-		if len(v) != 4:
-			raise ValueError('Номер карты должен состоять ровно из 4 цифр.')
-
-		return v
-
-	@field_validator('date')
-	@staticmethod
-	def validate_date_format(v):
-		try:
-			datetime.strptime(f"2000-{v}", "%Y-%m-%d")
-			return v
-		except ValueError:
-			raise ValueError("Дата должна быть в формате MM-DD")
+	# @field_validator('masked_number')
+	# def validate_card_number_format(self, v: str) -> str:
+	# 	if not v.isdigit():
+	# 		raise ValueError('Номер карты должен состоять только из цифр.')
+	#
+	# 	if len(v) != 4:
+	# 		raise ValueError('Номер карты должен состоять ровно из 4 цифр.')
+	#
+	# 	return v
