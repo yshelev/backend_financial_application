@@ -25,12 +25,14 @@ class CreateCardSchema(BaseModel):
 	date: str
 	balance: float = 0
 
-	# @field_validator('masked_number')
-	# def validate_card_number_format(self, v: str) -> str:
-	# 	if not v.isdigit():
-	# 		raise ValueError('Номер карты должен состоять только из цифр.')
-	#
-	# 	if len(v) != 4:
-	# 		raise ValueError('Номер карты должен состоять ровно из 4 цифр.')
-	#
-	# 	return v
+class ExportTransactionDataSchema(BaseModel):
+	...
+
+class ExportCardDataSchema(BaseModel):
+	name: str
+	masked_number: str
+	date: str
+	currency: str
+	balance:decimal.Decimal
+
+	transactions: list["ExportTransactionDataSchema"]
