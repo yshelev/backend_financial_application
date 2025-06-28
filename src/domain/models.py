@@ -39,8 +39,8 @@ class TransactionModel(Base):
 	amount: Mapped[decimal.Decimal] = mapped_column(Numeric(10, 3))
 	currency: Mapped[str] = mapped_column()
 
-	description: Mapped[str] = mapped_column(None)
-	icon_res_id: Mapped[int] = mapped_column(None)
+	description: Mapped[str] = mapped_column(nullable=True)
+	icon_res_id: Mapped[int] = mapped_column()
 
 	date: Mapped[datetime] = mapped_column(
 		DateTime(timezone=True),
