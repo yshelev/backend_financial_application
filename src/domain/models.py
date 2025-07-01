@@ -4,6 +4,7 @@ from uuid import uuid4
 
 from sqlalchemy import String, DateTime, func, Numeric, Date, ForeignKey, JSON
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from pydantic import BaseModel, EmailStr
 
 currencies = ["RUB", "USD", "EUR"]
 
@@ -16,6 +17,8 @@ class UserModel(Base):
 	username: Mapped[str] = mapped_column(String(50))
 	password: Mapped[str] = mapped_column()
 	email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+	is_verified: Mapped[bool] = mapped_column(default=False)
+	verification_token: Mapped[str] = mapped_column(String(100), nullable=True)
 	registration_data: Mapped[datetime] = mapped_column(
 		DateTime(timezone=True),
 		default=func.now()
@@ -89,3 +92,6 @@ class BackupModel(Base):
 	)
 
 	data: Mapped[dict] = mapped_column(JSON)
+
+class ResendVerificationRequest(BaseModel):
+	email: EmailStr

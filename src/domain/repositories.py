@@ -40,9 +40,31 @@ class UserRepository(AsyncRepository):
     async def read_by_email(self, email: str):
         user = await self.session.execute(select(UserModel).where(UserModel.email == email))
         return user.scalar()
+    
+    async def read_by_verification_token(self, token: str) -> UserModel | None:
+        print(f"TOKEN {token}")
+        result = await self.session.execute(
+            select(UserModel).where(UserModel.verification_token == token)
+        )
+        return result.scalars().first()
 
     async def create(self, user):
         self.session.add(user)
+        await self.session.commit()
+        await self.session.refresh(user)
+        return user
+    
+    async def update(self, user_id: int, update_data: dict) -> UserModel:
+        result = await self.session.execute(
+            select(UserModel).where(UserModel.id == user_id))
+        user = result.scalars().first()
+        
+        if not user:
+            raise ValueError("User not found")
+        
+        for key, value in update_data.items():
+            setattr(user, key, value)
+        
         await self.session.commit()
         await self.session.refresh(user)
         return user
