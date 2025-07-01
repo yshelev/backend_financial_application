@@ -1,9 +1,10 @@
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, update, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker, selectinload
 
+from src.application.schemas import BackupSchema, BackupDataSchema
 from src.domain.database import async_engine
-from src.domain.models import UserModel, TransactionModel, CardModel
+from src.domain.models import UserModel, TransactionModel, CardModel, BackupModel
 
 
 async def get_async_db():
@@ -65,8 +66,6 @@ class TransactionRepository(AsyncRepository):
     async def delete(self, transaction_id):
         trns = await self.session.execute(delete(TransactionModel).where(TransactionModel.id == transaction_id))
         await self.session.commit()
-        print(trns)
-        print("ayo")
 
 class CardRepository(AsyncRepository):
     async def read_by_id(self, card_id: int):
@@ -86,3 +85,38 @@ class CardRepository(AsyncRepository):
     async def delete(self, card_id):
         await self.session.execute(delete(CardModel).where(CardModel.id == card_id))
         await self.session.commit()
+
+    async def patch_card(self, card_id, new_balance):
+        card = (await self.session.execute(select(CardModel).where(CardModel.id == card_id))).scalar()
+        card.balance = new_balance
+        await self.session.commit()
+        await self.session.refresh(card)
+        return card
+
+class BackupRepository(AsyncRepository):
+    async def upsert_backup(self, backup_data: BackupDataSchema, user_id: int):
+        query = (select(BackupModel)
+                 .where(BackupModel.user_id == user_id)
+                 .order_by(BackupModel.date))
+        backup = (await self.session.execute(query)).scalar_one_or_none()
+
+        if backup:
+            query = (update(BackupModel)
+                    .where(BackupModel.user_id == user_id)
+                    .values(**{"data": backup_data.model_dump()}))
+        else:
+            query = (insert(BackupModel)
+                     .values(**{
+                            "user_id": user_id,
+                            "data": backup_data.model_dump()
+                    }))
+
+        await self.session.execute(query)
+        await self.session.commit()
+        return
+
+    async def get_backup(self, user_id: int):
+        query = (select(BackupModel)
+                 .where(BackupModel.user_id == user_id)
+                 .order_by(BackupModel.date))
+        return (await self.session.execute(query)).scalar_one_or_none()

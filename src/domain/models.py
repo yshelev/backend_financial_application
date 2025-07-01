@@ -1,7 +1,8 @@
 import decimal
 from datetime import datetime, date
+from uuid import uuid4
 
-from sqlalchemy import String, DateTime, func, Numeric, Date, ForeignKey
+from sqlalchemy import String, DateTime, func, Numeric, Date, ForeignKey, JSON
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 currencies = ["RUB", "USD", "EUR"]
@@ -77,3 +78,14 @@ class CategoryModel(Base):
 	icon_url: Mapped[str] = mapped_column()
 	user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 	user: Mapped["UserModel"] = relationship(back_populates="categories")
+
+class BackupModel(Base):
+	__tablename__ = "backups"
+	id: Mapped[str] = mapped_column(default=str(uuid4()), primary_key=True)
+	user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+	date: Mapped[datetime] = mapped_column(
+		DateTime(timezone=True),
+		default=func.now()
+	)
+
+	data: Mapped[dict] = mapped_column(JSON)
