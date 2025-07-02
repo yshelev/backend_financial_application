@@ -14,9 +14,9 @@ class CreateTransactionSchema(BaseModel):
 	is_income: bool
 	amount: decimal.Decimal
 	currency: str = "RUB"
-	icon_res_id: int
 	description: str = None
 	card_id: int
+	category_id: int
 
 class CreateCardSchema(BaseModel):
 	masked_number: str
@@ -65,3 +65,10 @@ class GetBackupSchema(BaseModel):
 class BalanceUpdateSchema(BaseModel):
 	card_id: int
 	new_balance: decimal.Decimal
+
+class CreateCategorySchema(BaseModel):
+	title: str
+	icon_res_id: int
+	user_id: int
+	is_income: bool
+	color: str
