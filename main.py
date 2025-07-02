@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import os
 
 from src.domain.database import create_tables
-from src.presentation.routers import cards_routes, transaction_routes, user_routes
+from src.presentation.routers import cards_routes, transaction_routes, user_routes, categories_routes
 from src.services.email import EmailService
 
 load_dotenv()
@@ -30,6 +30,7 @@ app.state.email_service = email_service
 app.include_router(cards_routes.router)
 app.include_router(transaction_routes.router)
 app.include_router(user_routes.router)
+app.include_router(categories_routes.router)
 
 
 if __name__ == "__main__":

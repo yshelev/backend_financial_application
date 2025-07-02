@@ -79,7 +79,7 @@ class CategoryModel(Base):
 	title: Mapped[str] = mapped_column()
 	icon_res_id: Mapped[str] = mapped_column()
 	user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-	is_income: Mapped[int] = mapped_column()
+	is_income: Mapped[bool] = mapped_column()
 	color: Mapped[str] = mapped_column()
 	user: Mapped["UserModel"] = relationship(back_populates="categories")
 

@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker, selectinload
 
 from src.application.schemas import BackupSchema, BackupDataSchema
 from src.domain.database import async_engine
-from src.domain.models import UserModel, TransactionModel, CardModel, BackupModel
+from src.domain.models import UserModel, TransactionModel, CardModel, BackupModel, CategoryModel
 
 
 async def get_async_db():
@@ -142,3 +142,22 @@ class BackupRepository(AsyncRepository):
                  .where(BackupModel.user_id == user_id)
                  .order_by(BackupModel.date))
         return (await self.session.execute(query)).scalar_one_or_none()
+
+class CategoryRepository(AsyncRepository):
+    async def read_by_id(self, card_id: int):
+        category = await self.session.execute(select(CategoryModel).where(CategoryModel.id == card_id))
+        return category.scalar()
+
+    async def read_by_user(self, user: UserModel):
+        categories = await self.session.execute(select(CategoryModel).where(CategoryModel.user_id == user.id))
+        return categories.scalars().all()
+
+    async def create(self, category):
+        self.session.add(category)
+        await self.session.commit()
+        await self.session.refresh(category)
+        return category
+
+    async def delete(self, category_id):
+        await self.session.execute(delete(CategoryModel).where(CategoryModel.id == category_id))
+        await self.session.commit()

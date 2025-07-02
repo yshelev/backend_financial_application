@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from src.domain.models import UserModel, ResendVerificationRequest
-from src.domain.repositories import UserRepository, get_async_db, CardRepository
+from src.domain.repositories import UserRepository, get_async_db, CardRepository, CategoryRepository
 from src.application.schemas import CreateUserSchema
 from src.services.token_generator import generate_token
 from src.services.email import EmailStr
@@ -43,7 +43,7 @@ async def verify_email(
     user = await UserRepository(db).read_by_verification_token(token)
     if not user:
         raise HTTPException(status_code=404, detail="Неверный токен")
-    
+
     await UserRepository(db).update(user.id, {"is_verified": True})
     return {"message": "Email успешно подтвержден"}
 
@@ -63,6 +63,14 @@ async def get_cards_by_user(email: str, db: AsyncSession = Depends(get_async_db)
         return []
     return await CardRepository(db).read_by_user(user)
 
+@router.get("/{email}/categories")
+async def get_categories_by_user(email: str, db: AsyncSession = Depends(get_async_db)):
+    user = await UserRepository(db).read_by_email(email)
+    print(user)
+    if not user:
+        return []
+    return await CategoryRepository(db).read_by_user(user)
+
 @router.post("/register")
 async def register_user(
     user_data: CreateUserSchema,
@@ -71,7 +79,7 @@ async def register_user(
 ):
     if await UserRepository(db).read_by_email(user_data.email):
         raise HTTPException(status_code=400, detail="Email уже зарегистрирован")
-    
+
     user = UserModel(
         username=user_data.username,
         email=user_data.email,
@@ -81,13 +89,13 @@ async def register_user(
         verification_token=generate_token()
     )
     created_user = await UserRepository(db).create(user)
-    
+
     verification_link = f"http://localhost:8000/users/verify-email?token={user.verification_token}"
     await request.app.state.email_service.send_verification_email(
         user_data.email,
         verification_link
     )
-    
+
     return created_user
 
 @router.post("/resend-verification")
@@ -99,11 +107,11 @@ async def resend_verification(
     user = await UserRepository(db).read_by_email(request_data.email)
     if not user:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
-    
+
     if user.is_verified:
         return {"message": "Email уже подтвержден"}
-    
+
     verification_link = f"http://localhost:8000/users/verify-email?token={user.verification_token}"
     await request.app.state.email_service.send_verification_email(request_data.email, verification_link)
-    
+
     return {"message": "Письмо отправлено повторно"}

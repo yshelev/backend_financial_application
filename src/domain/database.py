@@ -7,8 +7,8 @@ from src.domain.models import Base
 ASYNC_DATABASE_URL = "sqlite+aiosqlite:///1.db"
 DATABASE_URL = "sqlite:///1.db"
 
-logging.basicConfig()
-logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+# logging.basicConfig()
+# logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 async_engine = create_async_engine(ASYNC_DATABASE_URL)
 engine = create_engine(DATABASE_URL)
 
