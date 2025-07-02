@@ -44,14 +44,13 @@ class TransactionModel(Base):
 	currency: Mapped[str] = mapped_column()
 
 	description: Mapped[str] = mapped_column(nullable=True)
-	icon_res_id: Mapped[int] = mapped_column()
 
 	date: Mapped[datetime] = mapped_column(
 		DateTime(timezone=True),
 		default=func.now()
 	)
 
-	category: Mapped[str] = mapped_column(default="Salary")
+	category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
 
 	card_id: Mapped[int] = mapped_column(ForeignKey("cards.id"))
 	card: Mapped["CardModel"] = relationship(back_populates="transactions")
@@ -78,8 +77,10 @@ class CategoryModel(Base):
 	__tablename__ = "categories"
 	id: Mapped[int] = mapped_column(primary_key=True)
 	title: Mapped[str] = mapped_column()
-	icon_url: Mapped[str] = mapped_column()
+	icon_res_id: Mapped[str] = mapped_column()
 	user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+	is_income: Mapped[int] = mapped_column()
+	color: Mapped[str] = mapped_column()
 	user: Mapped["UserModel"] = relationship(back_populates="categories")
 
 class BackupModel(Base):
