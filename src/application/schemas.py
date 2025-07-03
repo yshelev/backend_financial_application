@@ -24,7 +24,7 @@ class CreateCardSchema(BaseModel):
 	currency: str = "RUB"
 	owner_id: int
 	date: str
-	balance: float = 0
+	balance: decimal.Decimal = decimal.Decimal("0")
 
 class ExportTransactionDataSchema(BaseModel):
 	...
