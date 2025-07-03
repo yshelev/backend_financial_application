@@ -17,6 +17,7 @@ class CreateTransactionSchema(BaseModel):
 	description: str = None
 	card_id: int
 	category_id: int
+	date: int
 
 class CreateCardSchema(BaseModel):
 	masked_number: str
@@ -40,9 +41,20 @@ class OutputTransactionSchema(BaseModel):
 	is_income: bool
 	amount: decimal.Decimal
 	currency: str
-	description: str
-	icon_res_id: int
-	date: datetime
+	description: str = None
+	category_id: int
+	card_id: int
+	date: int
+
+	class Config:
+		orm_mode = True
+
+	@field_validator("date", mode="before")
+	@classmethod
+	def convert_date(cls, v):
+		if isinstance(v, datetime):
+			return int(v.timestamp() * 1000)
+		return v
 
 class OutputCardSchema(BaseModel):
 	name: str
