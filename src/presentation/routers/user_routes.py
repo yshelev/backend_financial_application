@@ -4,9 +4,9 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from src.domain.models import UserModel, ResendVerificationRequest
+from src.domain.models import UserModel, ResendVerificationRequest, TransactionModel
 from src.domain.repositories import UserRepository, get_async_db, CardRepository, CategoryRepository
-from src.application.schemas import CreateUserSchema
+from src.application.schemas import CreateUserSchema, OutputTransactionSchema
 from src.services.token_generator import generate_token
 from src.services.email import EmailStr
 
@@ -17,18 +17,37 @@ router = APIRouter(prefix="/users",
 async def get_users(db: AsyncSession = Depends(get_async_db)):
     return await UserRepository(db).read_all()
 
-@router.get("/{email}/transactions")
+@router.get("/{email}/transactions/")
 async def get_transactions_by_user(email: str, db: AsyncSession = Depends(get_async_db)):
+    print(email)
     user = await UserRepository(db).read_by_email_with_cards_and_transactions(email)
     if not user:
         return []
+    print(user.email)
+
     cards = user.cards
     output = []
 
     for card in cards:
-        output.extend(card.transactions)
-
+        output.extend([transaction_to_schema(t) for t in card.transactions])
+    for transaction in output:
+        print(transaction)
+        # for column in transaction.__table__.columns:
+        #     print(f"{column.name} = {getattr(transaction, column.name)}")
     return output
+
+
+def transaction_to_schema(transaction: TransactionModel) -> OutputTransactionSchema:
+    return OutputTransactionSchema(
+        is_income=transaction.is_income,
+        amount=transaction.amount,
+        currency=transaction.currency,
+        description=transaction.description if transaction.description is not None else "",
+        date=int(transaction.date.timestamp() * 1000) if transaction.date else 0,
+        category_id=188,
+        card_id=transaction.card_id
+    )
+
 
 @router.post("/")
 async def create_user(user: CreateUserSchema, db: AsyncSession = Depends(get_async_db)):

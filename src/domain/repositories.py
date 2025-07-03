@@ -81,8 +81,11 @@ class TransactionRepository(AsyncRepository):
 
     async def create(self, transaction):
         self.session.add(transaction)
+        for column in transaction.__table__.columns:
+            print(f"{column.name} = {getattr(transaction, column.name)}")
         await self.session.commit()
         await self.session.refresh(transaction)
+        print(transaction.date)
         return transaction
 
     async def delete(self, transaction_id):
